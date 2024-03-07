@@ -1,0 +1,11 @@
+
+<div class="posts-container">
+<%= link_to "トップページへ", posts_home_path %>
+  <% if user_signed_in? %>
+    <%= link_to "マイページへ", user_path(current_user.id) %>
+  <% end %>
+
+    <%= submit_tag '検索' %>
+
+  
+  

@@ -1,0 +1,86 @@
+<h1>ぼらんてら</h1>
+<h3>Post詳細</h3>
+<div class="post">
+  <p><%= @post.genre %></p>
+  <p><%= @post.area %></p>
+  <p><%= @post.created_at %></p>
+  <%= image_tag @post.image_url, size: "250x200" if @post.image? %>
+    <% if user_signed_in? %>
+      <% if current_user.already_liked?(@post) %>
+        <%= link_to post_like_path(@post), method: :delete do %>
+          <p>いいねを取り消す</p><%= @post.likes.count %>
+        <% end %>
+      <% else %>
+        <%= link_to post_likes_path(@post), method: :post do %>
+          <p>いいね</p><%= @post.likes.count %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <p>いいねの数 = </p><%= @post.likes.count %>
+    <% end %>
+  <%= link_to "編集する", edit_post_path(@post.id) %>
+</div>
+
+<%= link_to "投稿一覧に戻る", posts_path %>
+
+
+
+<h2>いいねしたユーザー</h2>
+  <% @post.liked_users.each do |user| %>
+  <li><%= user.email %></li>
+<% end %>
+
+<% @post.tags.each do |tag| %>
+  <span><%= tag.name %></span>
+
+<% end %>
+
+
+<h2>Google Map</h2>
+<div id='show-map'></div>
+<style>
+#show-map {
+  height: 400px;
+  width: 100%;
+}
+</style>
+<!-- JavaScript部分 -->
+<script>
+  function initShowMap() {
+    let showMap = new google.maps.Map(document.getElementById('show-map'), {
+      zoom: 12,
+      center: { lat: <%= @post.lat %>, lng: <%= @post.lng %> },
+      styles: [
+        {
+          stylers: [
+            { "saturation": 0 },
+            { "lightness": 0 }
+          ]
+        }
+      ]
+    });
+    // マーカーを表示
+    let marker = new google.maps.Marker({
+      position: { lat: <%= @post.lat %>, lng: <%= @post.lng %> },
+      map: showMap,
+      title: '<%= @post.name %>'
+    });
+    // マーカーをクリックしたとき、詳細情報を表示
+    let infowindow = new google.maps.InfoWindow({
+      content: "<a href='<%= post_url(@post.id) %>'><%= @post.name %></a>"
+    });
+    marker.addListener('click', function() {
+      infowindow.open(showMap, marker);
+    });
+  }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkxCV4XGBt1l8ID4gCPcOBXv-Ny71LwLE&callback=initShowMap" async defer></script>
+<%= link_to "お土産一覧に戻る", posts_path %>
+<%= link_to "編集する", edit_post_path(@post
+.id) %>
+
+
+
+
+

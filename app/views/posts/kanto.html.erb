@@ -1,0 +1,38 @@
+<%= form_tag({controller:"posts",action:"index"}, method: :get) do %>
+  <%= text_field_tag :tag %>
+  <%= submit_tag 'タグを追加' %>
+<% end %>
+
+<% @kanto.each do |t| %>
+  <div class="Post">
+    <%= t.user.email %> 
+    <%= t.name %>
+        <% if user_signed_in? %>
+          <% if current_user.already_liked?(t) %>
+            <%= link_to post_like_path(id: t.id, post_id: t.id), method: :delete do %>
+              <p>いいねを取り消す</p><%= t.likes.count %>
+            <% end %>
+          <% else %>
+            <%= link_to post_likes_path(id: t.id, post_id: t.id), method: :post do %>
+              <p>いいね</p><%= t.likes.count %>
+            <% end %>
+          <% end %>
+      <% else %>
+        <p>いいねの数 = </p><%= t.likes.count %>
+    <% end %>
+
+    <%= image_tag t.image_url, size: "250x200" if t.image? %>
+
+    <%= t.created_at %>
+    <%= link_to "詳細へ", post_path(t.id) %>
+    <% if user_signed_in? && current_user.id == t.user_id %>
+      <%= link_to "編集する", edit_post_path(t.id) %>
+      <%= link_to "削除する", post_path(t.id), method: :delete %>
+    <% end %> 
+    
+  </div>
+<% end %>
+</div>
+
+
+
